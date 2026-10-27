@@ -9,16 +9,19 @@ void print_binary_word(BinaryWord binary_word);
 class BinaryMatrix
 {
     public:
+        BinaryMatrix(std::size_t row_number, std::size_t get_column_number);
         BinaryMatrix(std::initializer_list<std::initializer_list<bool>> values);
         BinaryMatrix& operator=(std::initializer_list<std::initializer_list<bool>> values);
 
-        BinaryMatrix& operator*(const BinaryMatrix& matrix_a);
+        std::optional<BinaryMatrix> operator* (const BinaryMatrix& matrix_b);
+        const BinaryWord& operator[](std::size_t index) const;
+        BinaryWord&       operator[](std::size_t index);
 
-        std::size_t get_row_number();
-        std::size_t get_column_number();
+        std::size_t get_row_number   () const;
+        std::size_t get_column_number() const;
 
     private:
-        std::vector<std::vector<bool>> body;
+        std::vector<BinaryWord&> body;
 };
 
 class BinarySymmetricChannel
