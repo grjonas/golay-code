@@ -86,7 +86,7 @@ std::optional<BinaryMatrix> BinaryMatrix::operator*(const BinaryMatrix& matrix_b
             bool value = 0;
             for (std::size_t k = 0; k < n; ++k)
             {
-                auto get_cell = [](BinaryMatrix& matrix, std::size_t x, std::size_t y)
+                auto get_cell = [](BinaryMatrix matrix, std::size_t x, std::size_t y)
                 {
                     BinaryWord word = matrix[x];
 
@@ -108,25 +108,43 @@ std::optional<BinaryMatrix> BinaryMatrix::operator*(const BinaryMatrix& matrix_b
     return matrix_c;
 }
 
-// const BinaryWord& BinaryMatrix::operator[](std::size_t index) const
-// {
-//     if (this->get_row_number() <= index)
-//     {
-//         UNREACHABLE;
-//     }
-//
-//     return this->body[index];
-// }
-//
-// BinaryWord& BinaryMatrix::operator[](std::size_t index)
-// {
-//     if (this->get_row_number() <= index)
-//     {
-//         UNREACHABLE;
-//     }
-//
-//     return this->body[index];
-// }
+const BinaryWord& BinaryMatrix::operator[](std::size_t index) const
+{
+    if (this->get_row_number() <= index)
+    {
+        UNREACHABLE;
+    }
+
+    return this->body[index];
+}
+
+BinaryWord& BinaryMatrix::operator[](std::size_t index)
+{
+    if (this->get_row_number() <= index)
+    {
+        UNREACHABLE;
+    }
+
+    return this->body[index];
+}
+
+std::size_t BinaryMatrix::get_row_number() const
+{
+    return body.size();
+}
+
+std::size_t BinaryMatrix::get_column_number() const
+{
+    auto size = body.size();
+    if (size == 0)
+    {
+        return size;
+    }
+    else
+    {
+        return body[0].size();
+    }
+}
 
 BinarySymmetricChannel::BinarySymmetricChannel(double error_rate) :
     error_rate{error_rate},

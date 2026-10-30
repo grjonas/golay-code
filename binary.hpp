@@ -21,7 +21,7 @@ class BinaryMatrix
         std::size_t get_column_number() const;
 
     private:
-        std::vector<BinaryWord&> body;
+        std::vector<BinaryWord> body;
 };
 
 class BinarySymmetricChannel
