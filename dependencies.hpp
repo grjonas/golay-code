@@ -6,8 +6,9 @@
 #include <random>
 #include <cassert>
 #include <algorithm>
+#include <functional>
 
-#define UNREACHABLE assert(false && "This code should be unreachable")
+#define UNREACHABLE(unreachable_msg) assert(false && (unreachable_msg))
 
 class RandomNumberGenerator
 {

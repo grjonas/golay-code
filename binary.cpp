@@ -88,11 +88,15 @@ std::optional<BinaryMatrix> BinaryMatrix::operator*(const BinaryMatrix& matrix_b
             {
                 auto get_cell = [](BinaryMatrix matrix, std::size_t x, std::size_t y)
                 {
-                    BinaryWord word = matrix[x];
+                    if (matrix[x] == std::nullopt)
+                    {
+                        UNREACHABLE("Malfored matrix");
+                    }
+                    BinaryWord word = matrix[x].value();
 
                     if (word.size() <= y)
                     {
-                        UNREACHABLE;
+                        UNREACHABLE("Malformed word");
                     }
 
                     return word[y];
@@ -101,28 +105,33 @@ std::optional<BinaryMatrix> BinaryMatrix::operator*(const BinaryMatrix& matrix_b
                 // value = matrix_a[i][k] + matrix_b[k][j];
                 value = get_cell(matrix_a, i, k) + get_cell(matrix_b, k, j);
             }
-            matrix_c[i][j] = value;
+            if (matrix_c[i] == std::nullopt)
+            {
+                UNREACHABLE("Malformed matrix");
+            }
+            BinaryWord& i_hate_this_fucking_language = matrix_c[i].value();
+            i_hate_this_fucking_language[j] = value;
         }
     }
 
     return matrix_c;
 }
 
-const BinaryWord& BinaryMatrix::operator[](std::size_t index) const
+std::optional<std::reference_wrapper<const BinaryWord>> BinaryMatrix::operator[](std::size_t index) const
 {
     if (this->get_row_number() <= index)
     {
-        UNREACHABLE;
+        return std::nullopt;
     }
 
     return this->body[index];
 }
 
-BinaryWord& BinaryMatrix::operator[](std::size_t index)
+std::optional<std::reference_wrapper<BinaryWord>> BinaryMatrix::operator[](std::size_t index)
 {
     if (this->get_row_number() <= index)
     {
-        UNREACHABLE;
+        return std::nullopt;
     }
 
     return this->body[index];
