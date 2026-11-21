@@ -4,7 +4,10 @@
 
 using BinaryWord = std::vector<bool>;
 
-void print_binary_word(BinaryWord binary_word);
+void print_binary_word(const BinaryWord& binary_word);
+size_t weight(const BinaryWord& word);
+BinaryWord add_binary_words(const BinaryWord& word_a, const BinaryWord& word_b);
+BinaryWord concat_words(const BinaryWord& word_a, const BinaryWord& word_b);
 
 class BinaryMatrix
 {
@@ -14,9 +17,11 @@ class BinaryMatrix
         BinaryMatrix& operator=(std::initializer_list<std::initializer_list<bool>> values);
 
         std::optional<BinaryMatrix> operator*(const BinaryMatrix& matrix_b);
+        BinaryWord   operator*(const BinaryWord& word);
         std::optional<std::reference_wrapper<const BinaryWord>> operator[](std::size_t index) const;
         std::optional<std::reference_wrapper<BinaryWord>>       operator[](std::size_t index);
 
+        std::vector<BinaryWord> get_rows();
         std::size_t get_row_number   () const;
         std::size_t get_column_number() const;
 

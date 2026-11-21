@@ -54,13 +54,36 @@
 //     Vektorių iš kūno Fq elementų sujungimas į vieną tekstą (paveiksliuką).
 
 // TODO: check if double is high enough precision for error rate.
-using Settings = struct
-{
-    int finite_field_size; // q in F_q
-    double error_rate; // 0 <= q_e <= 1
-};
+// using Settings = struct
+// {
+//     int finite_field_size; // q in F_q
+//     double error_rate; // 0 <= q_e <= 1
+// };
+
+bool testing_scenario(BinaryWord initial_word, double p_e);
+bool scenario_one();
 
 int main()
+{
+    return scenario_one() ? 0 : 1;
+}
+
+bool scenario_one()
+{
+    BinaryWord initial_word =
+        { 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0 };
+    double p_e = 0.1;
+
+    printf("Enter a binary vector of length 12 (example, \"010101111111\"):\n");
+
+
+    printf("Enter a channel error rate:\n");
+
+    return true;
+    // scenario_one_logic(initial_word, p_e);
+}
+
+bool testing_scenario(BinaryWord initial_word, double p_e)
 {
     // ================================================================================
     // Receiving input
@@ -68,8 +91,9 @@ int main()
     RandomNumberGenerator random_number_generator(0, 1);
     std::cout << random_number_generator.generate() << std::endl;
 
-    BinaryWord initial_word =
-        { 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0 };
+    // BinaryWord initial_word =
+    //     { 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0 };
+    assert(initial_word.size() == 12);
 
     // ================================================================================
     // Encoding
@@ -79,13 +103,18 @@ int main()
     // ================================================================================
     // Passing through channel
     // ================================================================================
-    BinarySymmetricChannel channel(0.1);
+    BinarySymmetricChannel channel(p_e);
     BinaryWord received_word = channel.send_elements(encoded_word);
     
     // ================================================================================
     // Decoding
     // ================================================================================
-    BinaryWord decoded_word = golay::decode_word(received_word);
+    std::optional<BinaryWord> decoded_word_optional = golay::decode_word(received_word);
+    if (!decoded_word_optional.has_value())
+    {
+        return false;
+    }
+    BinaryWord decoded_word = decoded_word_optional.value();
     
     // ================================================================================
     // Showing output
@@ -93,5 +122,5 @@ int main()
     print_binary_word(initial_word);
     print_binary_word(decoded_word);
 
-    return 0;
+    return true;
 }

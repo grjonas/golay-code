@@ -20,5 +20,5 @@ extern bool is_prime(int integer)
          if (integer % i == 0) return false;
     }
 
-    return false;
+    return true;
 }

@@ -1,18 +1,67 @@
 #include "binary.hpp"
 
-void print_binary_word(BinaryWord binary_word)
+void print_binary_word(const BinaryWord& binary_word)
 {
-    for (int i = 0; i < binary_word.size(); ++i)
+    for (size_t i = 0; i < binary_word.size(); ++i)
     {
         if (binary_word.size() - 1 == i)
         {
-            std::cout << std::endl;
+            std::cout << binary_word[i] << std::endl;
         }
         else
         {
             std::cout << binary_word[i] << " ";
         }
     }
+}
+
+size_t weight(const BinaryWord& word)
+{
+    size_t total = 0;
+
+    for (size_t i = 0; i < word.size(); ++i)
+    {
+        if (word[i] == true)
+        {
+            ++total;
+        }
+    }
+
+    return total;
+}
+
+BinaryWord add_binary_words(const BinaryWord& word_a, const BinaryWord& word_b)
+{
+    assert(word_a.size() == word_b.size());
+
+    size_t word_size = word_a.size();
+    BinaryWord new_word(word_size, false); 
+    for (size_t i = 0; i < word_size; ++i)
+    {
+        new_word[i] = word_a[i] ^ word_b[i];
+    }
+
+    return new_word;
+}
+
+BinaryWord concat_words(const BinaryWord& word_a, const BinaryWord& word_b)
+{
+    size_t word_a_size = word_a.size();
+    size_t word_b_size = word_b.size();
+    size_t new_word_size = word_a_size + word_b_size;
+
+    BinaryWord new_word(new_word_size, false);
+    for (size_t i = 0; i < word_a_size; ++i)
+    {
+        new_word[i] = word_a[i];
+    }
+
+    for (size_t i = 0; i < word_b_size; ++i)
+    {
+        new_word[word_a_size + i] = word_b[i];
+    }
+
+    return new_word;
 }
 
 // TODO: This is obviously innefficient, fix later
@@ -83,10 +132,11 @@ std::optional<BinaryMatrix> BinaryMatrix::operator*(const BinaryMatrix& matrix_b
     {
         for (std::size_t j = 0; j < p; ++j)
         {
-            bool value = 0;
+            bool value = false;
             for (std::size_t k = 0; k < n; ++k)
             {
-                auto get_cell = [](BinaryMatrix matrix, std::size_t x, std::size_t y)
+                // This copies the matrix on every function call :(
+                auto get_cell = [](const BinaryMatrix& matrix, std::size_t x, std::size_t y)
                 {
                     if (matrix[x] == std::nullopt)
                     {
@@ -103,18 +153,35 @@ std::optional<BinaryMatrix> BinaryMatrix::operator*(const BinaryMatrix& matrix_b
                 };
 
                 // value = matrix_a[i][k] + matrix_b[k][j];
-                value = get_cell(matrix_a, i, k) + get_cell(matrix_b, k, j);
+                value = get_cell(matrix_a, i, k) & get_cell(matrix_b, k, j);
             }
             if (matrix_c[i] == std::nullopt)
             {
                 UNREACHABLE("Malformed matrix");
             }
-            BinaryWord& i_hate_this_fucking_language = matrix_c[i].value();
-            i_hate_this_fucking_language[j] = value;
+            BinaryWord& i_hate_this_language = matrix_c[i].value();
+            i_hate_this_language[j] = value;
         }
     }
 
     return matrix_c;
+}
+
+BinaryWord BinaryMatrix::operator*(const BinaryWord& word)
+{
+    const auto& rows = this->get_rows();
+    assert(word.size() == rows.size());
+
+    BinaryWord result(rows[0].size(), false);
+    for (size_t i = 0; i < word.size(); ++i)
+    {
+        if (word[i])
+        {
+            result = add_binary_words(result, rows[i]);
+        }
+    }
+
+    return result; 
 }
 
 std::optional<std::reference_wrapper<const BinaryWord>> BinaryMatrix::operator[](std::size_t index) const
@@ -135,6 +202,12 @@ std::optional<std::reference_wrapper<BinaryWord>> BinaryMatrix::operator[](std::
     }
 
     return this->body[index];
+}
+
+
+std::vector<BinaryWord> BinaryMatrix::get_rows()
+{
+    return this->body;
 }
 
 std::size_t BinaryMatrix::get_row_number() const

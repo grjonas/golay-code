@@ -6,5 +6,5 @@
 namespace golay
 {
     BinaryWord encode_word(BinaryWord word);
-    BinaryWord decode_word(BinaryWord word);
+    std::optional<BinaryWord> decode_word(BinaryWord word);
 }
