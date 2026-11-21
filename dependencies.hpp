@@ -7,6 +7,9 @@
 #include <cassert>
 #include <algorithm>
 #include <functional>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #define UNREACHABLE(unreachable_msg) assert(false && (unreachable_msg))
 
